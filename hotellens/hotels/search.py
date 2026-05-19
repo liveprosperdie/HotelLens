@@ -1,4 +1,5 @@
 import requests
+from concurrent.futures import ThreadPoolExecutor
 import json
 
 
@@ -39,7 +40,6 @@ def get_hotels(city):
 	    "x-rapidapi-host": "booking-com15.p.rapidapi.com",
 	    "Content-Type": "application/json"
     }
-    
     response = requests.get(url, headers=headers, params=querystring)
     data=response.json()
     hotels_details=[]
@@ -50,11 +50,14 @@ def get_hotels(city):
                 "review_score": hotel["property"]["reviewScore"],
                 "price": hotel["property"]["priceBreakdown"]["grossPrice"]["value"],
                 "property_class": hotel["property"]["propertyClass"],
-                "hotel_id": hotel["hotel_id"],
-                "amenities":get_amenities(hotel["hotel_id"])
+                "hotel_id": hotel["hotel_id"]
             }
         )
-    return hotels_details
+    with ThreadPoolExecutor() as executor:
+        amenities_list=executor.map(get_amenities, [h["hotel_id"] for h in hotels_details])
+        for hotel,amenities in zip(hotels_details,amenities_list):
+            hotel["amenities"]=amenities
+    print (hotels_details)
 
 
 def get_amenities(hotel_id):
@@ -71,3 +74,4 @@ def get_amenities(hotel_id):
     return amenities
 
 
+get_hotels("Agra")

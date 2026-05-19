@@ -53,7 +53,21 @@ def get_hotels(city):
                 "hotel_id": hotel["hotel_id"]
             }
         )
-    print(json.dumps(hotels_details,indent=4))
+    return hotels_details
 
 
-get_hotels("AGRA")
+def get_amenities(hotel_id):
+    url = "https://booking-com15.p.rapidapi.com/api/v1/hotels/getHotelFacilities"
+    querystring = {"hotel_id":hotel_id,"arrival_date":"2026-06-01","departure_date":"2026-06-04","languagecode":"en-us"}
+    headers = {
+        "x-rapidapi-key": "392ab4de0bmsh54ce54dab743b94p161e0ejsn2fe9990ac38c",
+        "x-rapidapi-host": "booking-com15.p.rapidapi.com",
+        "Content-Type": "application/json"
+    }
+    response = requests.get(url, headers=headers, params=querystring)
+    data=response.json()
+    amenities=[i["instances"][0]["title"] for i in data["data"]["facilities"]]
+    print(amenities)
+
+
+get_amenities("78801")

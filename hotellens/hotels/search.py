@@ -50,7 +50,8 @@ def get_hotels(city):
                 "review_score": hotel["property"]["reviewScore"],
                 "price": hotel["property"]["priceBreakdown"]["grossPrice"]["value"],
                 "property_class": hotel["property"]["propertyClass"],
-                "hotel_id": hotel["hotel_id"]
+                "hotel_id": hotel["hotel_id"],
+                "amenities":get_amenities(hotel["hotel_id"])
             }
         )
     return hotels_details
@@ -67,7 +68,6 @@ def get_amenities(hotel_id):
     response = requests.get(url, headers=headers, params=querystring)
     data=response.json()
     amenities=[i["instances"][0]["title"] for i in data["data"]["facilities"]]
-    print(amenities)
+    return amenities
 
 
-get_amenities("78801")

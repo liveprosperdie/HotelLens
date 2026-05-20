@@ -22,7 +22,7 @@
             {{ hotel.property_class }} stars &nbsp;|&nbsp;
             HotelLens Score: {{ hotel.score }}
         </div>
-        <div class="amenities">{{ hotel.amenities|join:", " }}</div>
+        <div class="amenities">{{ hotel.key_amenities|join:"| " }}</div>
     </div>
     {% endfor %}
 </body>

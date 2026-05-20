@@ -19,43 +19,50 @@ def get_dest_id(city):
         return None
     
 
-def get_hotels(city):
+def get_hotels(city,arrival_date="2026-06-01",departure_date="2026-06-04",adults=1,children_age=[],min_price=0,max_price=10**5):
     dest_id=get_dest_id(city)
     if dest_id is None:
         return []
     url = "https://booking-com15.p.rapidapi.com/api/v1/hotels/searchHotels"
-    querystring = {
-        "dest_id":dest_id,
-        "search_type":"CITY",
-        "arrival_date":"2026-06-01",
-        "departure_date":"2026-06-04",
-        "adults":"1",
-        "children_age":"0,17",
-        "room_qty":"1",
-        "page_number":"1",
-        "units":"metric",
-        "temperature_unit":"c",
-        "languagecode":"en-us",
-        "currency_code":"INR",
-        "location":"US"}
     headers = {
 	    "x-rapidapi-key": API_KEY,
 	    "x-rapidapi-host": "booking-com15.p.rapidapi.com",
 	    "Content-Type": "application/json"
     }
-    response = requests.get(url, headers=headers, params=querystring)
-    data=response.json()
+    def fetch_pages(page):
+        querystring = {
+        "dest_id":dest_id,
+        "search_type":"CITY",
+        "arrival_date":arrival_date,
+        "departure_date":departure_date,
+        "adults":adults,
+        "children_age":children_age,
+        "room_qty":"1",
+        "page_number":page,
+        "units":"metric",
+        "temperature_unit":"c",
+        "languagecode":"en-us",
+        "currency_code":"INR",
+        "price_min":min_price,
+        "price_max":max_price,
+        "location":"US"}
+        response=requests.get(url, headers=headers, params=querystring)
+        return response.json()["data"]["hotels"]
+    
+    with ThreadPoolExecutor() as executor:
+        all_pages=executor.map(fetch_pages,[1,2,3,4,5])
     hotels_details=[]
-    for hotel in data["data"]["hotels"][:2]:
-        hotels_details.append(
-            {
-                "name": hotel["property"]["name"],
-                "review_score": hotel["property"]["reviewScore"],
-                "price": hotel["property"]["priceBreakdown"]["grossPrice"]["value"],
-                "property_class": hotel["property"]["propertyClass"],
-                "hotel_id": hotel["hotel_id"]
-            }
-        )
+    for page in all_pages:
+        for hotel in page:
+            hotels_details.append(
+                {
+                    "name": hotel["property"]["name"],
+                    "review_score": hotel["property"]["reviewScore"],
+                    "price": hotel["property"]["priceBreakdown"]["grossPrice"]["value"],
+                    "property_class": hotel["property"]["propertyClass"],
+                    "hotel_id": hotel["hotel_id"]
+                }
+            )
     with ThreadPoolExecutor() as executor:
         amenities_list=executor.map(get_amenities, [h["hotel_id"] for h in hotels_details])
         for hotel,amenities in zip(hotels_details,amenities_list):

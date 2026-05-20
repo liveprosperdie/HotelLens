@@ -4,6 +4,12 @@
   <h1>HotelLens</h1>
   <form method="GET" action="/search">
     <input type="text" name="city" placeholder="Enter city name">
+    <input type="date" name="arrival_date">
+    <input type="date" name="departure_date">
+    <input type="number" name="adults" placeholder="Adults" min="1" value="1">
+    <input type="number" name="children_age" placeholder="Children" min="0" value="0">
+    <input type="number" name="min_price" placeholder="Min price (₹)">
+    <input type="number" name="max_price" placeholder="Max price (₹)">
     <button type="submit">Search</button>
   </form>
 </body>

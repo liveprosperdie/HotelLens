@@ -1,16 +1,248 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HotelLens</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0a0f;
+      --surface: #13131a;
+      --surface2: #1c1c27;
+      --border: #2a2a3a;
+      --accent: #c9a84c;
+      --accent2: #e8c97a;
+      --text: #e8e8f0;
+      --muted: #7a7a99;
+      --input-bg: #16161f;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Background texture */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: radial-gradient(ellipse at 20% 50%, rgba(201,168,76,0.05) 0%, transparent 60%),
+                        radial-gradient(ellipse at 80% 20%, rgba(100,80,180,0.05) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .container {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 0 24px;
+      position: relative;
+      z-index: 1;
+    }
+
+    header {
+      padding: 60px 0 20px;
+      text-align: center;
+    }
+
+    .logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 52px;
+      font-weight: 700;
+      letter-spacing: -1px;
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 50%, #fff8e7 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: fadeDown 0.8s ease both;
+    }
+
+    .tagline {
+      color: var(--muted);
+      font-size: 15px;
+      font-weight: 300;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-top: 8px;
+      animation: fadeDown 0.8s 0.1s ease both;
+    }
+
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .search-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 36px;
+      margin: 40px 0 60px;
+      animation: fadeUp 0.8s 0.2s ease both;
+      box-shadow: 0 24px 60px rgba(0,0,0,0.5);
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .search-card h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 22px;
+      font-weight: 400;
+      color: var(--text);
+      margin-bottom: 28px;
+    }
+
+    .search-card h2 span {
+      color: var(--accent);
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-group.full {
+      grid-column: 1 / -1;
+    }
+
+    label {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    input {
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 13px 16px;
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      outline: none;
+      width: 100%;
+    }
+
+    input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(201,168,76,0.12);
+    }
+
+    input::placeholder { color: var(--muted); }
+
+    input[type="date"]::-webkit-calendar-picker-indicator {
+      filter: invert(0.5);
+      cursor: pointer;
+    }
+
+    .search-btn {
+      grid-column: 1 / -1;
+      margin-top: 8px;
+      padding: 16px;
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
+      color: #0a0a0f;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.1s;
+    }
+
+    .search-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+    .search-btn:active { transform: translateY(0); }
+
+    .divider {
+      height: 1px;
+      background: var(--border);
+      margin: 28px 0;
+    }
+
+    .price-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    footer {
+      text-align: center;
+      padding: 40px 0;
+      color: var(--muted);
+      font-size: 13px;
+      border-top: 1px solid var(--border);
+    }
+  </style>
+</head>
 <body>
-  <h1>HotelLens</h1>
-  <form method="GET" action="/search">
-    <input type="text" name="city" placeholder="Enter city name">
-    <input type="date" name="arrival_date">
-    <input type="date" name="departure_date">
-    <input type="number" name="adults" placeholder="Adults" min="1" value="1">
-    <input type="number" name="children_age" placeholder="Children" min="0" value="0">
-    <input type="number" name="min_price" placeholder="Min price (₹)">
-    <input type="number" name="max_price" placeholder="Max price (₹)">
-    <button type="submit">Search</button>
-  </form>
+  <div class="container">
+    <header>
+      <div class="logo">HotelLens</div>
+      <div class="tagline">Find your perfect stay</div>
+    </header>
+
+    <div class="search-card">
+      <h2>Where are you <span>headed?</span></h2>
+      <form method="GET" action="/search">
+        <div class="form-grid">
+          <div class="form-group full">
+            <label>Destination</label>
+            <input type="text" name="city" placeholder="City name (e.g. Agra, Jaipur, Mumbai)" required>
+          </div>
+          <div class="form-group">
+            <label>Check-in</label>
+            <input type="date" name="arrival_date">
+          </div>
+          <div class="form-group">
+            <label>Check-out</label>
+            <input type="date" name="departure_date">
+          </div>
+          <div class="form-group">
+            <label>Adults</label>
+            <input type="number" name="adults" min="1" value="1">
+          </div>
+          <div class="form-group">
+            <label>Children</label>
+            <input type="number" name="children_age" min="0" value="0">
+          </div>
+          <div class="divider" style="grid-column:1/-1; margin:4px 0;"></div>
+          <div class="form-group">
+            <label>Min Price (₹)</label>
+            <input type="number" name="min_price" placeholder="0">
+          </div>
+          <div class="form-group">
+            <label>Max Price (₹)</label>
+            <input type="number" name="max_price" placeholder="No limit">
+          </div>
+          <button type="submit" class="search-btn">Search Hotels →</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <footer>
+    <div class="container">HotelLens — Powered by real-time data</div>
+  </footer>
 </body>
 </html>

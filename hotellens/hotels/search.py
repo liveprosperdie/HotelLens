@@ -1,6 +1,6 @@
 import requests
 from concurrent.futures import ThreadPoolExecutor
-API_KEY="094b5f6fefmsh137f2fa3147e8bdp143a5cjsnf1a699bb8745"
+API_KEY="11f883029fmsh8a12a150ebf13bdp13599bjsncfcdfa9ad8fd"
 
 def get_dest_id(city):
     url = "https://booking-com15.p.rapidapi.com/api/v1/hotels/searchDestination"
@@ -60,7 +60,8 @@ def get_hotels(city,arrival_date="2026-06-01",departure_date="2026-06-04",adults
                     "review_score": hotel["property"]["reviewScore"],
                     "price": hotel["property"]["priceBreakdown"]["grossPrice"]["value"],
                     "property_class": hotel["property"]["propertyClass"],
-                    "hotel_id": hotel["hotel_id"]
+                    "hotel_id": hotel["hotel_id"],
+                    "photo": hotel["property"].get("photoUrls", [])
                 }
             )
     with ThreadPoolExecutor() as executor:
@@ -80,5 +81,7 @@ def get_amenities(hotel_id):
     }
     response = requests.get(url, headers=headers, params=querystring)
     data=response.json()
+    if not data.get("data") or not data["data"].get("facilities"):
+        return []
     amenities=[i["instances"][0]["title"] for i in data["data"]["facilities"]]
     return amenities

@@ -1,4 +1,6 @@
 from hotels.search import get_hotels
+
+
 ESSENTIAL_AMENITIES=[
     "Air conditioning", 
     "Heating", 
@@ -48,4 +50,19 @@ LUXURY_AMENITIES=[
 
 def rank_hotels(city):
     hotels=get_hotels(city)
-    amenities=[hotel[""] for hotel in hotels]
+    for hotel in hotels:
+        amenities=hotel["amenities"]
+        score=(10*hotel["review_score"])+(5*hotel["property_class"])
+        for e in ESSENTIAL_AMENITIES:
+            if e in amenities:
+                score+=1
+            else:
+                score-=2
+        for l in LUXURY_AMENITIES:
+            if l in amenities:
+                score+=4
+        score/=hotel["price"]
+        hotel["score"]=score
+
+    hotels.sort(key=lambda x:x["score"],reverse=True)
+    return hotels

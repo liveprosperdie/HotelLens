@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from hotels.search import get_hotel_details
 from hotels.ranker import rank_hotels
 
 
@@ -17,3 +18,11 @@ def search(request):
     hotels=rank_hotels(city,arrival_date,departure_date,adults,children_age,min_price,max_price)
     return render(request,"search.html",{"hotels":hotels})
 
+def hotel_detail(request):
+    hotel_id=request.GET["hotel_id"]
+    arrival_date=request.GET["arrival_date"]
+    departure_date=request.GET["departure_date"]
+    adults=request.GET["adults"]
+    children_age=request.GET["children_age"]
+    details=get_hotel_details(hotel_id,arrival_date,departure_date,adults,children_age)
+    return render (request,"hotel.html",{"details":details})

@@ -93,7 +93,7 @@ def get_amenities(hotel_id,arrival_date="2036-06-01",departure_date="2036-06-04"
     return amenities
 
 
-def get_hotel_details(hotel_id,arrival_date="2036-06-01",departure_date="2036-06-04",adults=1,children_age=[]):
+def get_hotel_details(hotel_id,arrival_date="2027-06-01",departure_date="2027-06-04",adults=1,children_age=[]):
     url = "https://booking-com15.p.rapidapi.com/api/v1/hotels/getHotelDetails"
     querystring = {"hotel_id":hotel_id,
                    "arrival_date":arrival_date,

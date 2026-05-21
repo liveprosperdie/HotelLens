@@ -1,6 +1,7 @@
 import requests
 from concurrent.futures import ThreadPoolExecutor
-API_KEY="11f883029fmsh8a12a150ebf13bdp13599bjsncfcdfa9ad8fd"
+from datetime import datetime
+API_KEY="5ba6665a0amshe03d09a055a8cadp18e1a1jsnee7a5dbe0511"
 
 def get_dest_id(city):
     url = "https://booking-com15.p.rapidapi.com/api/v1/hotels/searchDestination"
@@ -19,7 +20,7 @@ def get_dest_id(city):
         return None
     
 
-def get_hotels(city,arrival_date="2026-06-01",departure_date="2026-06-04",adults=1,children_age=[],min_price=0,max_price=10**5):
+def get_hotels(city,arrival_date="2036-06-01",departure_date="2036-06-04",adults=1,children_age=[],min_price=0,max_price=10**5):
     dest_id=get_dest_id(city)
     if dest_id is None:
         return []
@@ -48,7 +49,7 @@ def get_hotels(city,arrival_date="2026-06-01",departure_date="2026-06-04",adults
         "location":"US"}
         response=requests.get(url, headers=headers, params=querystring)
         return response.json()["data"]["hotels"]
-    
+    nights=(datetime.strptime(departure_date,"%Y-%m-%d") - datetime.strptime(arrival_date,"%Y-%m-%d")).days
     with ThreadPoolExecutor() as executor:
         all_pages=executor.map(fetch_pages,[1,2,3,4,5])
     hotels_details=[]
@@ -58,7 +59,8 @@ def get_hotels(city,arrival_date="2026-06-01",departure_date="2026-06-04",adults
                 {
                     "name": hotel["property"]["name"],
                     "review_score": hotel["property"]["reviewScore"],
-                    "price": hotel["property"]["priceBreakdown"]["grossPrice"]["value"],
+                    "price": ((hotel["property"]["priceBreakdown"]["grossPrice"]["value"])/nights),
+                    "total_price": hotel["property"]["priceBreakdown"]["grossPrice"]["value"],
                     "property_class": hotel["property"]["propertyClass"],
                     "hotel_id": hotel["hotel_id"],
                     "photo": hotel["property"].get("photoUrls", [])
@@ -71,9 +73,9 @@ def get_hotels(city,arrival_date="2026-06-01",departure_date="2026-06-04",adults
     return hotels_details
 
 
-def get_amenities(hotel_id):
+def get_amenities(hotel_id,arrival_date="2036-06-01",departure_date="2036-06-04"):
     url = "https://booking-com15.p.rapidapi.com/api/v1/hotels/getHotelFacilities"
-    querystring = {"hotel_id":hotel_id,"arrival_date":"2026-06-01","departure_date":"2026-06-04","languagecode":"en-us"}
+    querystring = {"hotel_id":hotel_id,"arrival_date":arrival_date,"departure_date":departure_date,"languagecode":"en-us"}
     headers = {
 	    "x-rapidapi-key": API_KEY,
 	    "x-rapidapi-host": "booking-com15.p.rapidapi.com",
@@ -85,3 +87,24 @@ def get_amenities(hotel_id):
         return []
     amenities=[i["instances"][0]["title"] for i in data["data"]["facilities"]]
     return amenities
+
+
+def get_hotel_details(hotel_id,arrival_date="2036-06-01",departure_date="2036-06-04",adults=1,children_age=[]):
+    url = "https://booking-com15.p.rapidapi.com/api/v1/hotels/getHotelDetails"
+    querystring = {"hotel_id":hotel_id,
+                   "arrival_date":arrival_date,
+                   "departure_date":departure_date,
+                   "adults":adults,
+                   "children_age":children_age,
+                   "room_qty":"1",
+                   "units":"metric",
+                   "temperature_unit":"c",
+                   "languagecode":"en-us",
+                   "currency_code":"INR"}
+    headers = {
+        "x-rapidapi-key": API_KEY,
+        "x-rapidapi-host": "booking-com15.p.rapidapi.com",
+        "Content-Type": "application/json"
+    }
+    response = requests.get(url, headers=headers, params=querystring)
+    print(response.json())

@@ -51,7 +51,7 @@ def get_hotels(city,arrival_date="2036-06-01",departure_date="2036-06-04",adults
         return response.json()["data"]["hotels"]
     nights=(datetime.strptime(departure_date,"%Y-%m-%d") - datetime.strptime(arrival_date,"%Y-%m-%d")).days
     with ThreadPoolExecutor() as executor:
-        all_pages=executor.map(fetch_pages,[1,2,3,4,5])
+        all_pages=executor.map(fetch_pages,[1,2,3,4,5,6,7,8,9,10])
     hotels_details=[]
     for page in all_pages:
         for hotel in page:
@@ -75,7 +75,11 @@ def get_hotels(city,arrival_date="2036-06-01",departure_date="2036-06-04",adults
 
 def get_amenities(hotel_id,arrival_date="2036-06-01",departure_date="2036-06-04"):
     url = "https://booking-com15.p.rapidapi.com/api/v1/hotels/getHotelFacilities"
-    querystring = {"hotel_id":hotel_id,"arrival_date":arrival_date,"departure_date":departure_date,"languagecode":"en-us"}
+    querystring = {"hotel_id":hotel_id,
+                   "arrival_date":arrival_date,
+                   "departure_date":departure_date,
+                   "languagecode":"en-us"
+                   }
     headers = {
 	    "x-rapidapi-key": API_KEY,
 	    "x-rapidapi-host": "booking-com15.p.rapidapi.com",
@@ -100,11 +104,22 @@ def get_hotel_details(hotel_id,arrival_date="2036-06-01",departure_date="2036-06
                    "units":"metric",
                    "temperature_unit":"c",
                    "languagecode":"en-us",
-                   "currency_code":"INR"}
+                   "currency_code":"INR"
+                   }
     headers = {
         "x-rapidapi-key": API_KEY,
         "x-rapidapi-host": "booking-com15.p.rapidapi.com",
         "Content-Type": "application/json"
     }
     response = requests.get(url, headers=headers, params=querystring)
-    print(response.json())
+    for s in response.json()["data"]:
+        details={
+            "name": s["hotel_name"],
+            "address": s["address"],
+            "coordinates": {"latitude": s["latitude"],"logitude":s["longitude"]},
+            "url": s["url"],
+            "top amenities":
+            "photo_urls":
+            "room_info":
+            "cancellation_policy":
+        }

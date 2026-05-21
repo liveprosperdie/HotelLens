@@ -112,14 +112,17 @@ def get_hotel_details(hotel_id,arrival_date="2036-06-01",departure_date="2036-06
         "Content-Type": "application/json"
     }
     response = requests.get(url, headers=headers, params=querystring)
+    room_id=hotel_id+"01"
     for s in response.json()["data"]:
         details={
             "name": s["hotel_name"],
             "address": s["address"],
             "coordinates": {"latitude": s["latitude"],"logitude":s["longitude"]},
             "url": s["url"],
-            "top amenities":
-            "photo_urls":
-            "room_info":
-            "cancellation_policy":
+            "top_amenities": [i["name"] for i in s["facilities_block"]["facilities"]], 
+            "photo_urls":[i["url_max750"] for i in s["rooms"][room_id]["photos"]],
+            "room_info": s["rooms"][room_id]["description"],
+            "cancellation_policy": s["block"]["paymentterms"]["cancellation"]["description"]
         }
+    
+    return details

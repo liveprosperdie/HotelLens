@@ -213,6 +213,11 @@
       justify-content: space-between;
     }
 
+    .hotel-name-link {
+      text-decoration: none;
+      color: inherit;
+    }
+
     .hotel-name {
       font-family: 'Playfair Display', serif;
       font-size: 19px;
@@ -220,6 +225,11 @@
       line-height: 1.3;
       margin-bottom: 10px;
       color: var(--text);
+      transition: color 0.2s;
+    }
+
+    .hotel-name-link:hover .hotel-name {
+      color: var(--accent);
     }
 
     .meta-row {
@@ -344,9 +354,6 @@
       border-top: 1px solid var(--border);
       margin-top: 20px;
     }
-
-    /* Luxury amenities list for the tag classifier */
-    /* (used in JS below) */
   </style>
 </head>
 <body>
@@ -388,7 +395,9 @@
         <!-- Card Content -->
         <div class="card-content">
           <div>
-            <div class="hotel-name">{{ hotel.name }}</div>
+            <a href="/hotel?hotel_id={{ hotel.hotel_id }}&arrival_date={{ arrival_date }}&departure_date={{ departure_date }}&adults={{ adults }}&children_age={{ children_age }}" class="hotel-name-link">
+              <div class="hotel-name">{{ hotel.name }}</div>
+            </a>
 
             <div class="meta-row">
               {% if hotel.property_class %}

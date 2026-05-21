@@ -1,7 +1,7 @@
 import requests
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
-API_KEY="5ba6665a0amshe03d09a055a8cadp18e1a1jsnee7a5dbe0511"
+API_KEY="6328246e8cmsh29eb11e566edcc5p15d895jsnf5a6288f812d"
 
 def get_dest_id(city):
     url = "https://booking-com15.p.rapidapi.com/api/v1/hotels/searchDestination"
@@ -14,7 +14,10 @@ def get_dest_id(city):
     response = requests.get(url, headers=headers, params=querystring)
     if "data" not in response.json():
         return None
-    if (response.json()["data"][0]["city_name"]).upper()==city.upper():
+    print(response.json()["data"][0]["dest_id"])
+    if city.upper() in response.json()["data"][0]["city_name"].upper():
+        return response.json()["data"][0]["dest_id"]
+    elif city.upper() == "CHANDIGARH":
         return response.json()["data"][0]["dest_id"]
     else:
         return None
@@ -93,7 +96,7 @@ def get_amenities(hotel_id,arrival_date="2036-06-01",departure_date="2036-06-04"
     return amenities
 
 
-def get_hotel_details(hotel_id,arrival_date="2027-06-01",departure_date="2027-06-04",adults=1,children_age=[]):
+def get_hotel_details(hotel_id,arrival_date="2026-06-01",departure_date="2026-06-04",adults=1,children_age=[]):
     url = "https://booking-com15.p.rapidapi.com/api/v1/hotels/getHotelDetails"
     querystring = {"hotel_id":hotel_id,
                    "arrival_date":arrival_date,
@@ -112,8 +115,9 @@ def get_hotel_details(hotel_id,arrival_date="2027-06-01",departure_date="2027-06
         "Content-Type": "application/json"
     }
     response = requests.get(url, headers=headers, params=querystring)
-    room_id=str(hotel_id)+"01"
     s = response.json()["data"]
+    room_id= str(s["block"][0]["room_id"])
+    nights=(datetime.strptime(departure_date,"%Y-%m-%d") - datetime.strptime(arrival_date,"%Y-%m-%d")).days
     details={
         "name": s["hotel_name"],
         "address": s["address"],
@@ -122,6 +126,12 @@ def get_hotel_details(hotel_id,arrival_date="2027-06-01",departure_date="2027-06
         "top_amenities": [i["name"] for i in s["facilities_block"]["facilities"]], 
         "photo_urls":[i["url_max750"] for i in s["rooms"][room_id]["photos"]],
         "room_info": s["rooms"][room_id]["description"],
-        "cancellation_policy": s["block"][0]["paymentterms"]["cancellation"]["description"]
+        "cancellation_policy": s["block"][0]["paymentterms"]["cancellation"]["description"],
+        "total_price": s["product_price_breakdown"]["gross_amount_hotel_currency"]["value"],
+        "nights":nights,
+        "price_per_night":(s["product_price_breakdown"]["gross_amount_hotel_currency"]["value"])/nights
     }
     return details
+
+
+get_dest_id("chandigarh")

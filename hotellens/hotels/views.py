@@ -16,7 +16,13 @@ def search(request):
     min_price=int(request.GET.get("min_price") or 0)
     max_price=int(request.GET.get("max_price") or 10**5)
     hotels=rank_hotels(city,arrival_date,departure_date,adults,children_age,min_price,max_price)
-    return render(request,"search.html",{"hotels":hotels})
+    return render(request, "search.html", {
+        "hotels": hotels,
+        "arrival_date": arrival_date,
+        "departure_date": departure_date,
+        "adults": adults,
+        "children_age": children_age
+    })
 
 def hotel_detail(request):
     hotel_id=request.GET["hotel_id"]
@@ -25,4 +31,8 @@ def hotel_detail(request):
     adults=request.GET["adults"]
     children_age=request.GET["children_age"]
     details=get_hotel_details(hotel_id,arrival_date,departure_date,adults,children_age)
-    return render (request,"hotel.html",{"details":details})
+    return render (request,"hotel.html",{
+        "details":details,
+        "arrival_date":arrival_date,
+        "departure_date": departure_date
+    })

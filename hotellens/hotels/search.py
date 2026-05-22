@@ -25,7 +25,7 @@ def get_dest_id(city):
         return None
     
 
-def get_hotels(city,arrival_date="2036-06-01",departure_date="2036-06-04",adults=1,children_age=[],min_price=0,max_price=10**5):
+def get_hotels(city,arrival_date="2026-09-01",departure_date="2026-09-04",adults=1,children_age=[],min_price=0,max_price=10**5):
     dest_id=get_dest_id(city)
     if dest_id is None:
         return []
@@ -78,7 +78,7 @@ def get_hotels(city,arrival_date="2036-06-01",departure_date="2036-06-04",adults
     return hotels_details
 
 
-def get_amenities(hotel_id,arrival_date="2036-06-01",departure_date="2036-06-04"):
+def get_amenities(hotel_id,arrival_date="2026-09-01",departure_date="2026-09-04"):
     url = "https://booking-com15.p.rapidapi.com/api/v1/hotels/getHotelFacilities"
     querystring = {"hotel_id":hotel_id,
                    "arrival_date":arrival_date,
@@ -98,7 +98,7 @@ def get_amenities(hotel_id,arrival_date="2036-06-01",departure_date="2036-06-04"
     return amenities
 
 
-def get_hotel_details(hotel_id,arrival_date="2026-06-01",departure_date="2026-06-04",adults=1,children_age=[]):
+def get_hotel_details(hotel_id,arrival_date="2026-09-01",departure_date="2026-09-04",adults=1,children_age=[]):
     url = "https://booking-com15.p.rapidapi.com/api/v1/hotels/getHotelDetails"
     querystring = {"hotel_id":hotel_id,
                    "arrival_date":arrival_date,

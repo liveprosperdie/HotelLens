@@ -1,7 +1,10 @@
 import requests
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
-API_KEY="6328246e8cmsh29eb11e566edcc5p15d895jsnf5a6288f812d"
+import os
+from dotenv import load_dotenv
+load_dotenv()
+API_KEY= os.environ.get("RAPIDAPI_KEY")
 
 def get_dest_id(city):
     url = "https://booking-com15.p.rapidapi.com/api/v1/hotels/searchDestination"
@@ -14,7 +17,6 @@ def get_dest_id(city):
     response = requests.get(url, headers=headers, params=querystring)
     if "data" not in response.json():
         return None
-    print(response.json()["data"][0]["dest_id"])
     if city.upper() in response.json()["data"][0]["city_name"].upper():
         return response.json()["data"][0]["dest_id"]
     elif city.upper() == "CHANDIGARH":
@@ -54,7 +56,7 @@ def get_hotels(city,arrival_date="2036-06-01",departure_date="2036-06-04",adults
         return response.json()["data"]["hotels"]
     nights=(datetime.strptime(departure_date,"%Y-%m-%d") - datetime.strptime(arrival_date,"%Y-%m-%d")).days
     with ThreadPoolExecutor() as executor:
-        all_pages=executor.map(fetch_pages,[1,2,3,4,5,6,7,8,9,10])
+        all_pages=executor.map(fetch_pages,[1,2,3,4,5])
     hotels_details=[]
     for page in all_pages:
         for hotel in page:
@@ -134,4 +136,3 @@ def get_hotel_details(hotel_id,arrival_date="2026-06-01",departure_date="2026-06
     return details
 
 
-get_dest_id("chandigarh")
